@@ -95,6 +95,10 @@
 
 ### 单词
 
-1. declaration 美 [ˌdekləˈreɪʃ(ə)n]
+1. Declaration 美 [ˌdekləˈreɪʃ(ə)n] 声明语句
 2. variable 美 [ˈveriəb(ə)l]
 3. abstract 美 [æbˈstrækt]
+4. literal 美[ˈlɪtərəl] 字面意义的
+5. Identifier 标识符
+6. Statement 语句
+7. Expression 表达式

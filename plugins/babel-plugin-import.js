@@ -36,7 +36,7 @@ const visitor = {
     }
   },
 };
-module.exports = function () {
+module.exports = () => {
   return {
     visitor,
   };

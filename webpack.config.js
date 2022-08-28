@@ -21,6 +21,7 @@ module.exports = {
           options: {
             presets: ["@babel/preset-env"],
             plugins: [
+              [path.resolve(__dirname, "plugins/babel-logger.js")],
               [
                 path.resolve(__dirname, "plugins/babel-plugin-import.js"), // 按需加载
                 { libraryName: "lodash", libraryDirectory: "" },
