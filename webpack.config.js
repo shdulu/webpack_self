@@ -1,5 +1,8 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+// const HtmlWebpackPlugin = require("html-webpack-plugin");
+const WebpackDonePlugin = require("./plugins/webpack-done-plugin");
+const WebpackRunPlugin = require("./plugins/webpack-run-plugin");
+
 module.exports = {
   mode: "development",
   entry: "./src/index.js",
@@ -15,21 +18,28 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env"],
-            plugins: [
-              [path.resolve(__dirname, "plugins/babel-logger.js")],
-              [
-                path.resolve(__dirname, "plugins/babel-plugin-import.js"), // 按需加载
-                { libraryName: "lodash", libraryDirectory: "" },
-              ],
-            ],
-          },
-        },
+        use: [
+          path.resolve(__dirname, "loaders/logger1-loader.js"),
+          path.resolve(__dirname, "loaders/logger2-loader.js"),
+        ],
       },
+      // {
+      //   test: /\.js$/,
+      //   exclude: /node_modules/,
+      //   use: {
+      //     loader: "babel-loader",
+      //     options: {
+      //       presets: ["@babel/preset-env"],
+      //       plugins: [
+      //         [path.resolve(__dirname, "plugins/babel-logger.js")],
+      //         [
+      //           path.resolve(__dirname, "plugins/babel-plugin-import.js"), // 按需加载
+      //           { libraryName: "lodash", libraryDirectory: "" },
+      //         ],
+      //       ],
+      //     },
+      //   },
+      // },
     ],
   },
   devServer: {
@@ -38,5 +48,9 @@ module.exports = {
     port: 8080,
     open: true,
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [
+    // new HtmlWebpackPlugin(),
+    new WebpackDonePlugin(),
+    new WebpackRunPlugin(),
+  ],
 };
