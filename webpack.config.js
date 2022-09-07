@@ -5,10 +5,16 @@ const WebpackRunPlugin = require("./plugins/webpack-run-plugin");
 
 module.exports = {
   mode: "development",
-  entry: "./src/index.js",
+  entry: {
+    entry1: "./src/index.js",
+    entry2: "./src/entry2.js",
+  },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "main.js",
+  },
+  resolve: {
+    extensions: [".js", ".jsx", ".json"],
   },
   module: {
     rules: [

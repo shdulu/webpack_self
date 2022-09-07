@@ -23,9 +23,9 @@ class Compiler {
   }
   compiler(callback) {
     // webpack 虽然只有一个Compiler,但是每次编译都会产出一个新的Compilation
-    const compilation = new Compilation();
+    const compilation = new Compilation(this.options);
     // 执行compilation的build方法进行编译，编译成功后执行回调
-    compilation.buildDependencies(callback);
+    compilation.build(callback);
   }
 }
 
