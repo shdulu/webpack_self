@@ -38,6 +38,7 @@ class Compilation {
       // 把入口文件的绝对路径添加到依赖数组中
       this.fileDependencies.push(entryFilePath);
       let entryModule = this.buildModule(entryName, entryFilePath);
+      this.modules.push(entryModule)
     }
   }
   buildModule(name, modulePath) {
