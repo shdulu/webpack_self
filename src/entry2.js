@@ -1,2 +1,2 @@
-const msg = require("./msg");
-console.log(`entry2------${msg}`);
+const title = require("./title");
+console.log(`entry2------${title}`);
