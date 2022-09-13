@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const parser = require("@babel/parser");
 const types = require("@babel/types");
-const { type } = require("os");
 const traverse = require("@babel/traverse").default;
 const generator = require("@babel/generator").default;
 
@@ -23,7 +22,7 @@ class Compilation {
     // 本次打包涉及了那些文件，主要是为了实现watch，监听文件的变化，文件发生变化后会重新进行编译
     this.fileDependencies = [];
   }
-  build() {
+  build(callback) {
     // 5. 根据配置文件中的`entry`配置项找到入口文件
     let entry = {};
     if (typeof this.options.entry === "string") {
@@ -38,8 +37,29 @@ class Compilation {
       // 把入口文件的绝对路径添加到依赖数组中
       this.fileDependencies.push(entryFilePath);
       let entryModule = this.buildModule(entryName, entryFilePath);
-      this.modules.push(entryModule)
+      this.modules.push(entryModule);
+      // 8. 等把所有的模块编译完成后，根据模块之间的依赖关系，组装成一个个包含多个模块的 chunk
+      let chunk = {
+        name: entryName, // 代码块的名称就是入口的名称
+        entryModule, // 此代码块对应的入口模块对象
+        modules: this.modules.filter((item) => item.names.includes(entryName)),
+      };
+      this.chunks.push(chunk);
     }
+    // 9. 再把各个代码块 chunk 转换成一个一个的文件(asset)加入到输出列表
+    this.chunks.forEach((chunk) => {
+      let filename = this.options.output.filename.replace("[name]", chunk.name);
+      this.assets[filename] = getSource(chunk);
+    });
+    callback(
+      null,
+      {
+        chunks: this.chunks,
+        modules: this.modules,
+        assets: this.assets,
+      },
+      this.fileDependencies
+    );
   }
   buildModule(name, modulePath) {
     // 6. 从入口文件出发，调用所有配置的规则，比如说 loader 对模块进行编译
@@ -82,7 +102,7 @@ class Compilation {
           let dirname = path.posix.dirname(modulePath);
           // 获取依赖模块的绝对路径
           let depModulePath = path.posix.join(dirname, depModuleName);
-          
+
           let extensions = this.options.resolve.extensions;
           // 尝试添加后缀，找到一个真实在硬盘上存在的文件
           depModulePath = tryExtensions(depModulePath, extensions);
@@ -114,6 +134,37 @@ class Compilation {
     return module;
   }
 }
+
+function getSource(chunk) {
+  return `
+  (() => {
+   var modules = {
+     ${chunk.modules.map(
+       (module) => `
+       "${module.id}": (module) => {
+         ${module._source}
+       }
+     `
+     )}  
+   };
+   var cache = {};
+   function require(moduleId) {
+     var cachedModule = cache[moduleId];
+     if (cachedModule !== undefined) {
+       return cachedModule.exports;
+     }
+     var module = (cache[moduleId] = {
+       exports: {},
+     });
+     modules[moduleId](module, module.exports, require);
+     return module.exports;
+   }
+   var exports ={};
+   ${chunk.entryModule._source}
+ })();
+  `;
+}
+
 function tryExtensions(modulePath, extensions) {
   if (fs.existsSync(modulePath)) {
     return modulePath;
