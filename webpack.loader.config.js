@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   mode: "development",
+  devtool: "source-map",
   entry: "./src/loader-index.js",
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -25,6 +26,11 @@ module.exports = {
             presets: ["@babel/preset-env"],
           },
         },
+      },
+      {
+        test: /\.less$/,
+        exclude: /node_modules/,
+        use: ["style-loader", "less-loader"],
       },
     ],
   },

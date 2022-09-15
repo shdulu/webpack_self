@@ -1,19 +1,25 @@
 const core = require("@babel/core");
-// const loaderUtils = require("loader-utils");
+const path = require("path");
 
-function loader(source) {
+function loader(source, inputSourceMap) {
   // this loader 函数执行的时候的this指针，指向loaderContext对象
   // webpack5 内置了this.getOptions
+  const filename = this.resourcePath.split(path.sep).pop();
   const options = this.getOptions();
-  console.log("babel-loader", options);
+  const loaderOptions = {
+    ...options,
+    inputSourceMap, // 上一个loader传递过来的它的sourcemap
+    sourceMaps: true, // 会基于上一个sourcemap 生成自己的sourcemap
+    filename,
+  };
+  console.log("babel-loader", loaderOptions);
   // code 转译后的代码
   // map 源代码和转译后代码的映射文件
   // ast 抽象语法树
-  let { code, map, ast } = core.transform(source, options);
+  let { code, map, ast } = core.transformSync(source, options);
+  console.log('map---', map);
   // this.callback 同步向下一个loader传递参数
-  // this.callback(null, code, map, ast);
-  console.log("babel-loader........", code, map, ast);
-  return source;
+  this.callback(null, code, map, ast);
 }
 
 module.exports = loader;
