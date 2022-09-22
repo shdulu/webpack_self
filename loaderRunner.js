@@ -92,8 +92,14 @@ function runLoaders(options, finalCallback) {
     resourceBuffer: null, // 本次要读取的资源文件的Buffer index.js 对用的buffer
     readResource,
   };
-  iteratePitchingLoader(processOptions, loaderContext, (err, result) => {
-    finalCallback(err, {});
+  iteratePitchingLoaders(processOptions, loaderContext, (err, result) => {
+    if (err) {
+      return finalCallback(err, {});
+    }
+    finalCallback(null, {
+      result: result,
+      resourceBuffer: processOptions.resourceBuffer
+    });
   });
 }
 
@@ -104,7 +110,7 @@ function runLoaders(options, finalCallback) {
  * @param {*} loaderContext
  * @param {*} pitchingCallback
  */
-function iteratePitchingLoader(
+function iteratePitchingLoaders(
   processOptions,
   loaderContext,
   pitchingCallback
@@ -114,9 +120,10 @@ function iteratePitchingLoader(
     return processResource(processOptions, loaderContext, pitchingCallback);
   }
   let currentLoader = loaderContext.loaders[loaderContext.loaderIndex];
+  // iterate
   if (currentLoader.pitchExecuted) {
     loaderContext.loaderIndex++;
-    return iteratePitchingLoader(
+    return iteratePitchingLoaders(
       processOptions,
       loaderContext,
       pitchingCallback
@@ -125,7 +132,7 @@ function iteratePitchingLoader(
   let pitchFn = currentLoader.pitch;
   currentLoader.pitchExecuted = true; // 表示这个loader的pitch已经执行过了
   if (!pitchFn) {
-    return iteratePitchingLoader(
+    return iteratePitchingLoaders(
       processOptions,
       loaderContext,
       pitchingCallback
@@ -141,6 +148,7 @@ function iteratePitchingLoader(
       loaderContext.data,
     ],
     (err, ...args) => {
+      if(err) return pitchingCallback(err)
       // 如果pitch的返回值不为空,则跳过后续loader和读文件操作，直接掉头执行前一个loader的normal
       if (args.length > 0 && args.some((item) => item)) {
         loaderContext.loaderIndex--;
@@ -151,7 +159,7 @@ function iteratePitchingLoader(
         //   pitchingCallback
         // );
       } else {
-        return iteratePitchingLoader(
+        return iteratePitchingLoaders(
           processOptions,
           loaderContext,
           pitchingCallback
