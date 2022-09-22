@@ -90,8 +90,94 @@ function runLoaders(options, finalCallback) {
   });
   let processOptions = {
     resourceBuffer: null, // 本次要读取的资源文件的Buffer index.js 对用的buffer
-    readResource
+    readResource,
   };
+  iteratePitchingLoader(processOptions, loaderContext, (err, result) => {
+    finalCallback(err, {});
+  });
+}
+
+/**
+ * 迭代执行从左向右执行每一个loader的pitch函数
+ *
+ * @param {*} processOptions
+ * @param {*} loaderContext
+ * @param {*} pitchingCallback
+ */
+function iteratePitchingLoader(
+  processOptions,
+  loaderContext,
+  pitchingCallback
+) {
+  if (loaderContext.loaderIndex >= loaderContext.loaders.length) {
+    // 从左向右执行到最后一个，开始读文件
+    return processResource(processOptions, loaderContext, pitchingCallback);
+  }
+  let currentLoader = loaderContext.loaders[loaderContext.loaderIndex];
+  if (currentLoader.pitchExecuted) {
+    loaderContext.loaderIndex++;
+    return iteratePitchingLoader(
+      processOptions,
+      loaderContext,
+      pitchingCallback
+    );
+  }
+  let pitchFn = currentLoader.pitch;
+  currentLoader.pitchExecuted = true; // 表示这个loader的pitch已经执行过了
+  if (!pitchFn) {
+    return iteratePitchingLoader(
+      processOptions,
+      loaderContext,
+      pitchingCallback
+    );
+  }
+  // 同步或者异步的方式执行fn - 数组传递给 fn的参数
+  runSyncOrAsync(
+    pitchFn,
+    loaderContext,
+    [
+      loaderContext.remainingRequest,
+      loaderContext.previousRequest,
+      loaderContext.data,
+    ],
+    (err, ...args) => {
+      // 如果pitch的返回值不为空,则跳过后续loader和读文件操作，直接掉头执行前一个loader的normal
+      if (args.length > 0 && args.some((item) => item)) {
+        loaderContext.loaderIndex--;
+        // iterateNormalLoaders(
+        //   processOptions,
+        //   loaderContext,
+        //   args,
+        //   pitchingCallback
+        // );
+      } else {
+        return iteratePitchingLoader(
+          processOptions,
+          loaderContext,
+          pitchingCallback
+        );
+      }
+    }
+  );
+}
+
+function runSyncOrAsync(fn, loaderContext, args, runCallback) {
+  // 标识fn同步执行还是异步执行
+  let isSync = true;
+  // 在loader的函数里执行callback，相当于执行下一个loader对应的函数
+  loaderContext.callback = (...args) => {
+    runCallback(...args);
+  };
+  loaderContext.async = function () {
+    isSync = false;
+    return loaderContext.callback;
+  };
+  let result = fn.apply(loaderContext, args);
+  // 如果是同步执行loader中的函数
+  if (isSync) {
+    // 直接调用runCallback 向下执行，如果是异步此处不执行了任何代码，等待loader里调用callback
+    runCallback(null, result);
+  }
 }
 
 exports.runLoaders = runLoaders;
