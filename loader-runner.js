@@ -1,4 +1,5 @@
-const { runLoaders } = require("loader-runner");
+// const { runLoaders } = require("loader-runner");
+const { runLoaders } = require("./loaderRunner");
 const path = require("path");
 const fs = require("fs");
 const entryFile = path.resolve(__dirname, "src/index.js");
@@ -60,12 +61,12 @@ runLoaders(
   {
     resource, //你要加载的资源
     loaders,
-    context: { name: "zhufeng", age: 100 }, //保存一些状态和值
+    context: { name: "shdulu", age: 100 }, //保存一些状态和值
     readResource: fs.readFile.bind(this),
   },
   (err, result) => {
     console.log(err); //运行错误
-    console.log(result); //运行的结果
+    console.log(result.result); //运行的结果
     console.log(
       result.resourceBuffer ? result.resourceBuffer.toString("utf8") : null
     ); //读到的原始的文件

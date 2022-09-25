@@ -1,3 +1,4 @@
+const { ifError } = require("assert");
 const fs = require("fs");
 
 function createLoaderObject(loader) {
@@ -92,15 +93,14 @@ function runLoaders(options, finalCallback) {
     resourceBuffer: null, // 本次要读取的资源文件的Buffer index.js 对用的buffer
     readResource,
   };
-  iteratePitchingLoaders(processOptions, loaderContext, (err, result) => {
-    if (err) {
-      return finalCallback(err, {});
-    }
-    finalCallback(null, {
-      result: result,
-      resourceBuffer: processOptions.resourceBuffer
+  const pitchingCallback = (err, result) => {
+    finalCallback(err, {
+      result,
+      resourceBuffer: processOptions.resourceBuffer,
     });
-  });
+  };
+  // 开始迭代执行每个loader的pitch函数
+  iteratePitchingLoaders(processOptions, loaderContext, pitchingCallback);
 }
 
 /**
@@ -148,16 +148,16 @@ function iteratePitchingLoaders(
       loaderContext.data,
     ],
     (err, ...args) => {
-      if(err) return pitchingCallback(err)
+      if (err) return pitchingCallback(err);
       // 如果pitch的返回值不为空,则跳过后续loader和读文件操作，直接掉头执行前一个loader的normal
       if (args.length > 0 && args.some((item) => item)) {
         loaderContext.loaderIndex--;
-        // iterateNormalLoaders(
-        //   processOptions,
-        //   loaderContext,
-        //   args,
-        //   pitchingCallback
-        // );
+        iterateNormalLoaders(
+          processOptions,
+          loaderContext,
+          args,
+          pitchingCallback
+        );
       } else {
         return iteratePitchingLoaders(
           processOptions,
@@ -169,6 +169,52 @@ function iteratePitchingLoaders(
   );
 }
 
+/**
+ *
+ *
+ * @param {*} processOptions
+ * @param {*} loaderContext
+ * @param {*} args
+ * @param {*} pitchingCallback
+ */
+function iterateNormalLoaders(
+  processOptions,
+  loaderContext,
+  args,
+  pitchingCallback
+) {
+  if (loaderContext.loaderIndex < 0) {
+    return pitchingCallback(null, ...args);
+  }
+  let currentLoader = loaderContext.loaders[loaderContext.loaderIndex];
+  if (currentLoader.normalExecuted) {
+    loaderContext.loaderIndex--;
+    return iterateNormalLoaders(
+      processOptions,
+      loaderContext,
+      args,
+      pitchingCallback
+    );
+  }
+  let normalFn = currentLoader.normal;
+  currentLoader.normalExecuted = true;
+  convertArgs(args, currentLoader.raw);
+  runSyncOrAsync(normalFn, loaderContext, args, (err, ...returnArgs) => {
+    return iterateNormalLoaders(
+      processOptions,
+      loaderContext,
+      [returnArgs],
+      pitchingCallback
+    );
+  });
+}
+function convertArgs(args, raw) {
+  if (raw && Buffer.isBuffer(args[0])) {
+    args[0] = Buffer.from(args[0]);
+  } else if (!raw && Buffer.isBuffer[args[0]]) {
+    args[0] = args[0].toString("utf8");
+  }
+}
 function runSyncOrAsync(fn, loaderContext, args, runCallback) {
   // 标识fn同步执行还是异步执行
   let isSync = true;
@@ -186,6 +232,26 @@ function runSyncOrAsync(fn, loaderContext, args, runCallback) {
     // 直接调用runCallback 向下执行，如果是异步此处不执行了任何代码，等待loader里调用callback
     runCallback(null, result);
   }
+}
+
+/**
+ * 读取资源
+ *
+ * @param {*} processOptions
+ * @param {*} loaderContext
+ * @param {*} pitchingCallback
+ */
+function processResource(processOptions, loaderContext, pitchingCallback) {
+  processOptions.readResource(loaderContext.resource, (err, resourceBuffer) => {
+    processOptions.resourceBuffer = resourceBuffer;
+    loaderContext.loaderIndex--;
+    iterateNormalLoaders(
+      processOptions,
+      loaderContext,
+      [resourceBuffer],
+      pitchingCallback
+    );
+  });
 }
 
 exports.runLoaders = runLoaders;
