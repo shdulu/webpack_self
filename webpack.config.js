@@ -2,6 +2,7 @@ const path = require("path");
 // const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackDonePlugin = require("./plugins/webpack-done-plugin");
 const WebpackRunPlugin = require("./plugins/webpack-run-plugin");
+const WebpackAssetsPlugin = require('./plugins/webpack-assets-plugin')
 
 module.exports = {
   mode: "development",
@@ -58,5 +59,6 @@ module.exports = {
     // new HtmlWebpackPlugin(),
     new WebpackDonePlugin(),
     new WebpackRunPlugin(),
+    new WebpackAssetsPlugin(),
   ],
 };

@@ -35,6 +35,7 @@
     "escodegen": "^2.0.0",
     "esprima": "^4.0.1",
     "estraverse": "^5.3.0",
+    "jszip": "^3.10.1",
     "lodash": "^4.17.21"
   }
 }
