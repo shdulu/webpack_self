@@ -1,5 +1,5 @@
-// const webpack = require("./_webpack");
-const webpack = require("webpack");
+const webpack = require("./_webpack");
+// const webpack = require("webpack");
 const options = require("./webpack.config");
 debugger;
 
