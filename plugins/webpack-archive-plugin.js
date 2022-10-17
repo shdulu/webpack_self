@@ -6,6 +6,7 @@
  * @class WebpackArchivePlugin
  */
 const jszip = require("jszip");
+const { RawSource } = require("webpack-sources");
 
 class WebpackArchivePlugin {
   constructor(options) {
@@ -13,10 +14,22 @@ class WebpackArchivePlugin {
   }
   apply(compiler) {
     // emit 这个钩子是webpack在确定好输出的文件名和文件内容之后，在写入谁的之前触发的，这是最后一个改变输出文件的机会
-    compiler.hooks.emit.tap("WebpackArchivePlugin", (compilation) => {
+    compiler.hooks.compilation.tap("WebpackArchivePlugin", (compilation) => {
       compilation.hooks.processAssets.tapPromise(
-        "WebpackArchivePlugin",
-        (assets) => {}
+        {
+          name: 'WebpackArchivePlugin'
+        },
+        (assets) => {
+          const zip = new jszip();
+          for (const filename in assets) {
+            const sourceObj = assets[filename];
+            const sourceCode = sourceObj.source();
+            zip.file(filename, sourceCode);
+          }
+          return zip.generateAsync({ type: "nodebuffer" }).then((zipCotent) => {
+            assets[`archive_${Date.now()}.zip`] = new RawSource(zipCotent);
+          });
+        }
       );
     });
   }

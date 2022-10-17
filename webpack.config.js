@@ -3,6 +3,7 @@ const path = require("path");
 const WebpackDonePlugin = require("./plugins/webpack-done-plugin");
 const WebpackRunPlugin = require("./plugins/webpack-run-plugin");
 const WebpackAssetsPlugin = require('./plugins/webpack-assets-plugin')
+const webpackArchivePlugin = require('./plugins/webpack-archive-plugin')
 
 module.exports = {
   mode: "development",
@@ -60,5 +61,6 @@ module.exports = {
     new WebpackDonePlugin(),
     new WebpackRunPlugin(),
     new WebpackAssetsPlugin(),
+    new webpackArchivePlugin(),
   ],
 };
