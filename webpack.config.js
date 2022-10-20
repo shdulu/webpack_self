@@ -18,6 +18,8 @@ module.exports = {
   },
   resolve: {
     extensions: [".js", ".jsx", ".json"],
+    alias: {},
+    modules: ['mymodules', 'node_modules']
   },
   // 配置模块外链，原理不再打包对应 lodash 模块，而是从window._ 上引入
   // externals: {
