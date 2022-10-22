@@ -1,5 +1,4 @@
-@color: red;
 #root {
-  color: @color;
+  color: red;
   background: #e2e2e2;
 }

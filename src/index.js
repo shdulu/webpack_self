@@ -1,6 +1,10 @@
 // babel按需加载原理
+// import "./style.css";
 import _ from "lodash";
 console.log("lodash_", _);
 
-// const title = require("./title");
-// console.log("entry1111----" + title);
+document.getElementById("btn").addEventListener("click", () => {
+  import(/* webpackPreload: true */ "./title").then((result) => {
+    console.log(result.default);
+  });
+});

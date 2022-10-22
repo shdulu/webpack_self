@@ -7,3 +7,6 @@
 
 1. 自动向 index.html 里插入 CDN 脚本
 2. 改造 webpack 生成模块的流程，如果发现是外链模块，则要选择不打包，而是变成从全局变量引入
+
+
+### @vue/preload-webpack-plugin
