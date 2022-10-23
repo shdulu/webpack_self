@@ -21,7 +21,6 @@ module.exports = {
   mode: "development",
   entry: {
     entry1: "./src/index.js",
-    // entry2: "./src/entry2.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -30,14 +29,18 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".json"],
     alias: {},
-    modules: ["mymodules", "node_modules"],
+    modules: ["node_modules"],
   },
   module: {
-    noParse: /jquery|lodash/, // 此模块不需要解析它的依赖
+    noParse: /lodash/, // 此模块不需要解析它的依赖
     rules: [
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ["style-loader", "css-loader", "postcss-loader"],
+      },
+      {
+        test: /\.less$/,
+        use: ["style-loader", "css-loader", "postcss-loader", "less-loader"],
       },
       // {
       //   test: /\.js$/,
@@ -53,13 +56,6 @@ module.exports = {
           loader: "babel-loader",
           options: {
             presets: ["@babel/preset-env"],
-            // plugins: [
-            //   [path.resolve(__dirname, "plugins/babel-logger.js")],
-            //   [
-            //     path.resolve(__dirname, "plugins/babel-plugin-import.js"), // 按需加载
-            //     { libraryName: "lodash", libraryDirectory: "" },
-            //   ],
-            // ],
           },
         },
       },
@@ -111,4 +107,4 @@ module.exports = {
       include: "asyncChunks",
     }),
   ],
-}
+};

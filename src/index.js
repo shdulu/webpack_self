@@ -1,5 +1,6 @@
 // babel按需加载原理
-// import "./style.css";
+import "./style.css";
+import './style.less'
 import _ from "lodash";
 console.log("lodash_", _);
 
