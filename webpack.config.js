@@ -4,10 +4,11 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackDonePlugin = require("./plugins/webpack-done-plugin");
 const WebpackRunPlugin = require("./plugins/webpack-run-plugin");
 const WebpackAssetsPlugin = require("./plugins/webpack-assets-plugin");
-const webpackArchivePlugin = require("./plugins/webpack-archive-plugin");
+// const webpackArchivePlugin = require("./plugins/webpack-archive-plugin");
 const WebpackExternalPlugin = require("./plugins/webpack-external-plugin");
 const PreloadWebpackPlugin = require("./plugins/preload-webpack-plugin");
-const SpeedMeasureWebpackPlugin = require("speed-measure-webpack-plugin");
+const { SkeletonPlugin } = require("./plugins/skeleton/index");
+// const SpeedMeasureWebpackPlugin = require("speed-measure-webpack-plugin");
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 // const PurgecssWebpackPlugin = require("purgecss-webpack-plugin");
@@ -20,7 +21,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: {
-    entry1: "./src/index.js",
+    app: "./src/skeleton.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -55,7 +56,7 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env"],
+            presets: ["@babel/preset-env", "@babel/preset-react"],
           },
         },
       },
@@ -82,8 +83,20 @@ module.exports = {
     //   filename: "static/css/[name][contenthash:8].css",
     // }),
     // new OptimizeCssAssetsPlugin(),
+    new SkeletonPlugin({
+      staticDir: path.resolve(__dirname, "dist"),
+      port: 8000,
+      origin: "http://localhost:8000",
+      device: "iPhone 6",
+      image: {
+        color: "#EFEFEF",
+      },
+      button: {
+        color: "#EFEFEF",
+      },
+    }),
     new HtmlWebpackPlugin({
-      template: "./public/index.html",
+      template: "./public/skeleton.html",
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -92,7 +105,7 @@ module.exports = {
     new WebpackDonePlugin(),
     new WebpackRunPlugin(),
     new WebpackAssetsPlugin(),
-    new webpackArchivePlugin(),
+    // new webpackArchivePlugin(),
     new WebpackExternalPlugin({
       lodash: {
         varName: "_",
