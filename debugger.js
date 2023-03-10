@@ -1,18 +1,18 @@
-const webpack = require("./_webpack");
-// const webpack = require("webpack");
-debugger;
+// const webpack = require("./_webpack");
+const webpack = require("./webpack_self");
 const options = require("./webpack.config");
 
-
+debugger;
 const compiler = webpack(options);
 debugger;
 compiler.run((err, stats) => {
   console.log(err);
   console.log(
     stats.toJson({
-      assets: true, // 本次编译产出的资源
-      chunks: true, // 本次编译产出的代码块
-      modules: true, // 本次编译产出的模块
+      entries: true, // 所有入口对象
+      chunks: true, // 所有的chunk代码块
+      modules: true, // 所有模块
+      assets: true, // 本次编译产出的资源 也就是 bundle 文件
     })
   );
 });

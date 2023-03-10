@@ -7,7 +7,7 @@ const WebpackAssetsPlugin = require("./plugins/webpack-assets-plugin");
 // const webpackArchivePlugin = require("./plugins/webpack-archive-plugin");
 const WebpackExternalPlugin = require("./plugins/webpack-external-plugin");
 const PreloadWebpackPlugin = require("./plugins/preload-webpack-plugin");
-const { SkeletonPlugin } = require("./plugins/skeleton/index");
+// const { SkeletonPlugin } = require("./plugins/skeleton/index");
 // const SpeedMeasureWebpackPlugin = require("speed-measure-webpack-plugin");
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
@@ -21,7 +21,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: {
-    app: "./src/skeleton.js",
+    app: path.join(__dirname, './src/index.js'),
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -83,20 +83,20 @@ module.exports = {
     //   filename: "static/css/[name][contenthash:8].css",
     // }),
     // new OptimizeCssAssetsPlugin(),
-    new SkeletonPlugin({
-      staticDir: path.resolve(__dirname, "dist"),
-      port: 8000,
-      origin: "http://localhost:8000",
-      device: "iPhone 6",
-      image: {
-        color: "#EFEFEF",
-      },
-      button: {
-        color: "#EFEFEF",
-      },
-    }),
+    // new SkeletonPlugin({
+    //   staticDir: path.resolve(__dirname, "dist"),
+    //   port: 8000,
+    //   origin: "http://localhost:8000",
+    //   device: "iPhone 6",
+    //   image: {
+    //     color: "#EFEFEF",
+    //   },
+    //   button: {
+    //     color: "#EFEFEF",
+    //   },
+    // }),
     new HtmlWebpackPlugin({
-      template: "./public/skeleton.html",
+      template: "./public/index.html",
       minify: {
         removeComments: true,
         collapseWhitespace: true,
