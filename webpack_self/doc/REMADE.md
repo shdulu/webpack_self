@@ -10,8 +10,37 @@
 
 > 以上过程中， `webpack` 会在特定的时间点广播出特定的事件，插件在监听到感兴趣的事件后会执行特定的逻辑，并且插件可以调用 `webpack` 提供的 API 改变 `webpack`的运行结果。loader 执行在特定的时间点执行编译
 
-![图片alt](图片地址 ''webpack构建流程'')
+![图片alt](图片地址 ''webpack 构建流程'')
 
 ### 调试 webpack
 
+- 打开工程目录，点击调试按钮，再点击小齿轮的配置按钮系统就会生成 launch.json 配置文件
+- 修改好了以后直接点击 F5 就可以启动调试
+  .vscode\launch.json
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "debug webpack",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/node_modules/webpack-cli/bin/cli.js"
+    }
+  ]
+}
+```
+
 ### Stats 对象
+
+- 在 Webpack 的回调函数中会得到 stats 对象
+- 这个对象实际来自于 `Compilation.getStats()`，返回的是主要含有 `modules`、`chunks`和`assets`三个属性值的对象。
+- Stats 对象本质上来自于 `lib/Stats.js` 的类实例
+
+| 字段 | 含义 |
+| ---- | :--: |
+modules | 记录了所有解析后的模块
+chunks | 记录了所有 chunk
+assets | 记录了所有要生成的文件
