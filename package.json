@@ -6,6 +6,7 @@
     "build": "webpack",
     "build:loader": "webpack --config webpack.loader.config.js",
     "build:library": "webpack --config webpack.library.config.js",
+    "build:mulcompiler": "webpack --config webpack.mulcompiler.config.js",
     "start": "webpack serve",
     "start:loader": "webpack serve --config webpack.loader.config.js"
   },
