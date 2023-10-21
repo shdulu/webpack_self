@@ -21,7 +21,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 module.exports = {
   mode: "development",
   entry: {
-    app: path.join(__dirname, './src/index.js'),
+    app: path.join(__dirname, "./src/index.js"),
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -42,6 +42,27 @@ module.exports = {
       {
         test: /\.less$/,
         use: ["style-loader", "css-loader", "postcss-loader", "less-loader"],
+      },
+      {
+        test: /\.png$/, // 会把png图片自动拷贝到输出目录中，并返回新路径
+        type: "asset/resource",
+      },
+      {
+        test: /\.jpg$/, // 会把png图片自动拷贝到输出目录中，并返回新路径
+        type: "asset", // 表示可以根据条件自动选择
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024, // 文件大小小于4k走inline，否则走resource
+          },
+        },
+      },
+      {
+        test: /\.ico$/, // 会把 ico 文件变成base64字符串并返回给调用者
+        type: "asset/inline",
+      },
+      {
+        test: /\.txt$/, // 会把txt文件内容返回
+        type: "asset/source",
       },
       // {
       //   test: /\.js$/,
