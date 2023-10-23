@@ -4,6 +4,7 @@
   "description": "this is webpack_self study",
   "scripts": {
     "build": "webpack",
+    "build:t": "webpack --config webpack.test.config.js",
     "build:loader": "webpack --config webpack.loader.config.js",
     "build:library": "webpack --config webpack.library.config.js",
     "build:mulcompiler": "webpack --config webpack.mulcompiler.config.js",
@@ -34,7 +35,6 @@
     "loader-runner": "^4.3.0",
     "mini-css-extract-plugin": "^2.6.1",
     "moment": "^2.29.4",
-    "optimize-css-assets-webpack-plugin": "^6.0.1",
     "postcss-loader": "^7.0.1",
     "puppeteer": "^19.7.2",
     "purgecss-webpack-plugin": "^5.0.0",

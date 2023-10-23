@@ -13,7 +13,6 @@ const PreloadWebpackPlugin = require("./plugins/preload-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 // const PurgecssWebpackPlugin = require("purgecss-webpack-plugin");
 // const glob = require("glob");
-// const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 // const PATHS = {
 //   src: path.resolve(__dirname, "src"),
 // };
@@ -26,6 +25,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name][chunkhash:8].js",
+    assetModuleFilename: "assets/[hash][ext]",
+    clean: true,
   },
   resolve: {
     extensions: [".js", ".jsx", ".json"],
@@ -35,6 +36,16 @@ module.exports = {
   module: {
     noParse: /lodash/, // 此模块不需要解析它的依赖
     rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-react"],
+          },
+        },
+      },
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader", "postcss-loader"],
@@ -71,16 +82,6 @@ module.exports = {
       //     path.resolve(__dirname, "loaders/logger2-loader.js"),
       //   ],
       // },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"],
-          },
-        },
-      },
     ],
   },
   devServer: {
