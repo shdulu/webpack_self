@@ -2,27 +2,68 @@
 const core = require("@babel/core");
 // 用来生成某些AST节点或者判断某个节点是不是需要个类型
 const types = require("@babel/types");
-
-// const sourcecode = `const sum = (a, b) => {
-//   console.log(this)
-//   const minus = (a,b) => {
-//     console.log(this)
-//   }
-//   return a + b
-// }`;
-
 const sourcecode = `const sum = (a, b) => a + b`;
+// const sourcecodeAst = {
+//   type: "Program",
+//   body: [
+//     {
+//       type: "VariableDeclaration",
+//       declarations: [
+//         {
+//           type: "VariableDeclarator",
+//           id: {
+//             type: "Identifier",
+//             name: "sum",
+//           },
+//           init: {
+//             type: "ArrowFunctionExpression",
+//             id: null,
+//             params: [
+//               {
+//                 type: "Identifier",
+//                 name: "a",
+//               },
+//               {
+//                 type: "Identifier",
+//                 name: "b",
+//               },
+//             ],
+//             body: {
+//               type: "BinaryExpression",
+//               operator: "+",
+//               left: {
+//                 type: "Identifier",
+//                 name: "a",
+//               },
+//               right: {
+//                 type: "Identifier",
+//                 name: "b",
+//               },
+//             },
+//             generator: false,
+//             expression: true,
+//             async: false,
+//           },
+//         },
+//       ],
+//       kind: "const",
+//     },
+//   ],
+//   sourceType: "module",
+// };
 
 const transformEs2015ArrowFunctions = {
   visitor: {
-    // 访问器
+    // 访问器 Visitor 上挂载以节点 type 命名的方法，当遍历 AST 的时候，如果匹配上 type，就会执行对应的方法
     ArrowFunctionExpression(path) {
+      debugger;
       let { node } = path;
       hoistFunctionEnvironment(path);
       node.type = "FunctionExpression";
       let body = node.body;
       // 如果函数体不是语义块
       if (!types.isBlockStatement(body)) {
+        // 快速方便的构造节点
         node.body = types.blockStatement([types.returnStatement(body)]);
       }
     },
@@ -48,7 +89,7 @@ function hoistFunctionEnvironment(path) {
       });
     }
     thisPaths.forEach((thisPath) => {
-      // this => _this
+      // this => _this 节点替换
       thisPath.replaceWith(types.identifier(thisBindings));
     });
   }
@@ -63,7 +104,6 @@ function getThisPaths(path) {
   return thisPaths;
 }
 const targetCode = core.transform(sourcecode, {
-  // plugins: ["transform-es2015-arrow-functions"],
   plugins: [transformEs2015ArrowFunctions],
 });
 

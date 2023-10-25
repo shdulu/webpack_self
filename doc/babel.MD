@@ -58,7 +58,7 @@
 
 ### 5.3.1 path
 
-- path[path](https://github.com/babel/babel/blob/main/packages/babel-traverse/src/path/index.ts)
+- [path](https://github.com/babel/babel/blob/main/packages/babel-traverse/src/path/index.ts)
 - node 当前 AST 节点
 - parent 父 AST 节点
 - parentPath 父 AST 节点的路径
