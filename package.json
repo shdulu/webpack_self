@@ -5,6 +5,7 @@
   "scripts": {
     "build": "webpack",
     "build:t": "webpack --config webpack.test.config.js",
+    "build:b": "webpack --config webpack.babel.config.js",
     "build:loader": "webpack --config webpack.loader.config.js",
     "build:library": "webpack --config webpack.library.config.js",
     "build:mulcompiler": "webpack --config webpack.mulcompiler.config.js",
