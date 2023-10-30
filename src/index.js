@@ -1,3 +1,4 @@
-import("./hello.js").then((result) => {
-  console.log(result.default);
-});
+const title = require("./title");
+
+console.log("title", title.age);
+console.log("title", title.name);

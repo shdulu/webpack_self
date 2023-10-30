@@ -97,10 +97,10 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.IgnorePlugin({
-      contextRegExp: /moment$/,
-      resourceRegExp: /^\.\/locale/,
-    }),
+    // new webpack.IgnorePlugin({
+    //   contextRegExp: /moment$/,
+    //   resourceRegExp: /^\.\/locale/,
+    // }),
     // new MiniCssExtractPlugin({
     //   filename: "static/css/[name][contenthash:8].css",
     // }),
@@ -117,29 +117,29 @@ module.exports = {
     //     color: "#EFEFEF",
     //   },
     // }),
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-      },
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: "./public/index.html",
+    //   minify: {
+    //     removeComments: true,
+    //     collapseWhitespace: true,
+    //   },
+    // }),
     new WebpackDonePlugin(),
     new WebpackRunPlugin(),
-    new WebpackAssetsPlugin(),
-    // new webpackArchivePlugin(),
-    new WebpackExternalPlugin({
-      lodash: {
-        varName: "_",
-        url: "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js",
-      },
-    }),
+    // new WebpackAssetsPlugin(),
+    // // new webpackArchivePlugin(),
+    // new WebpackExternalPlugin({
+    //   lodash: {
+    //     varName: "_",
+    //     url: "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js",
+    //   },
+    // }),
     // new PurgecssWebpackPlugin({
     //   paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true }),
     // }),
-    new PreloadWebpackPlugin({
-      rel: "preload",
-      include: "asyncChunks",
-    }),
+    // new PreloadWebpackPlugin({
+    //   rel: "preload",
+    //   include: "asyncChunks",
+    // }),
   ],
 };

@@ -7,7 +7,6 @@ const types = require("@babel/types");
 
 const visitor = {
   ImportDeclaration(path, state) {
-    debugger
     const { node } = path; //获取节点
     const { specifiers } = node; //获取批量导入声明数组
     const { libraryName, libraryDirectory = "lib" } = state.opts;

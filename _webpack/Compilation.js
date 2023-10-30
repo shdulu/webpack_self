@@ -9,7 +9,6 @@ function toUnixPath(path) {
   return path.replace(/\\/g, "/");
 }
 const baseDir = toUnixPath(process.cwd());
-
 class Compilation {
   constructor(options) {
     this.options = options;
@@ -33,7 +32,9 @@ class Compilation {
     // 6. 从入口文件出发，调用所有配置的规则，比如说 loader 对模块进行编译
     for (const entryName in entry) {
       // 入口的名称就是entry的属性名，也将会成为代码块的名称
-      const entryFilePath = path.posix.join(baseDir, entry[entryName]); // "d:/myProject/webpack/webpack6/src/index.js"
+      // path.posix -> 处理路径分割符 /
+      // const entryFilePath = path.posix.join(baseDir, entry[entryName]); // "d:/myProject/webpack/webpack6/src/index.js"
+      const entryFilePath = 'D:/myProject/webpack/webpack6/src/index.js'
       // 把入口文件的绝对路径添加到依赖数组中
       this.fileDependencies.push(entryFilePath);
       let entryModule = this.buildModule(entryName, entryFilePath);

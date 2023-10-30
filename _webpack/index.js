@@ -14,7 +14,7 @@ function webpack(options) {
 
   // 2. 用上一步的对象初始化 `Compiler` 对象
   const compiler = new Compiler(finalOptions);
-  // 3. 加载所有配置的插件
+  // 3. 加载所有配置的插件, 调用插件的apply方法注册事件
   const { plugins } = finalOptions;
   if (plugins && Array.isArray(plugins)) {
     for (const plugin of plugins) {
